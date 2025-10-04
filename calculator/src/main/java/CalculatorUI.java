@@ -7,6 +7,11 @@ public class CalculatorUI extends JFrame {
     private JComboBox<String> operatorBox;
     private JButton calculateButton;
 
+    // Scientific operators
+    private static final String[] OPERATORS = {
+        "+", "-", "*", "/", "sin", "cos", "tan", "log", "sqrt", "pow"
+    };
+
     public CalculatorUI() {
         setTitle("Calculator UI");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -40,7 +45,7 @@ public class CalculatorUI extends JFrame {
         JLabel label3 = new JLabel("Operator:");
         label3.setForeground(fgColor);
         add(label3);
-        operatorBox = new JComboBox<>(new String[]{"+", "-", "*", "/"});
+    operatorBox = new JComboBox<>(OPERATORS);
         operatorBox.setBackground(fieldColor);
         operatorBox.setForeground(fgColor);
         add(operatorBox);
@@ -63,9 +68,13 @@ public class CalculatorUI extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 try {
                     double num1 = Double.parseDouble(num1Field.getText());
-                    double num2 = Double.parseDouble(num2Field.getText());
-                    String operator = (String) operatorBox.getSelectedItem();
                     double result = 0;
+                    String operator = (String) operatorBox.getSelectedItem();
+                    // For binary operations, get num2
+                    double num2 = 0;
+                    if (operator.equals("+") || operator.equals("-") || operator.equals("*") || operator.equals("/") || operator.equals("pow")) {
+                        num2 = Double.parseDouble(num2Field.getText());
+                    }
                     switch (operator) {
                         case "+": result = num1 + num2; break;
                         case "-": result = num1 - num2; break;
@@ -74,6 +83,18 @@ public class CalculatorUI extends JFrame {
                             if (num2 != 0) result = num1 / num2;
                             else { resultField.setText("Error: Div by 0"); return; }
                             break;
+                        case "sin": result = Math.sin(Math.toRadians(num1)); break;
+                        case "cos": result = Math.cos(Math.toRadians(num1)); break;
+                        case "tan": result = Math.tan(Math.toRadians(num1)); break;
+                        case "log":
+                            if (num1 > 0) result = Math.log10(num1);
+                            else { resultField.setText("Error: log input"); return; }
+                            break;
+                        case "sqrt":
+                            if (num1 >= 0) result = Math.sqrt(num1);
+                            else { resultField.setText("Error: sqrt input"); return; }
+                            break;
+                        case "pow": result = Math.pow(num1, num2); break;
                     }
                     resultField.setText(String.valueOf(result));
                 } catch (NumberFormatException ex) {
